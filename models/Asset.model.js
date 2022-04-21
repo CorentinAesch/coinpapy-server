@@ -19,7 +19,6 @@ const assetSchema = new Schema(
         ref: 'Transaction' 
       }],
 
-      note: String,
     },
     {
       timestamps: true,

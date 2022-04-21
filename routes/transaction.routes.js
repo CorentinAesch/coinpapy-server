@@ -11,45 +11,34 @@ const helper = require("../helpers/helpers.js");
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 
-router.get('/transactions/create', isAuthenticated, async (req, res) => {
+// Create
+
+router.get('/transaction/create', isAuthenticated, async (req, res) => {
 
     try {
-        const coins = await Coin.find().sort('market_cap_rank');
+        //const coins = await Coin.find().sort('market_cap_rank');
         res.status(200).json("Here you can create a new transac")
     } catch(e) {
         res.status(500).json({ message: e });
     }
     
-}); 
+});
 
 
-router.post('/transactions/create', isAuthenticated,  async (req, res) => {
-
+router.post('/transaction/create', isAuthenticated,  async (req, res) => {
+   
     const { price, currency, amount, coin, total, transactionType, note } = req.body; 
     let { created } = req.body;
 
-    const token = req.cookie.jwt;
-
-    if (token) {
-        jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) =>{
-            if (err) {
-                console.log(err)
-                next();
-            } else {
-                const user = User.findById(decodedToken.id);
-                console.log(user);
-            }
-        })
-    }
-
+    const user = req.payload._id;
+  
     try{
 
-        let asset = await Asset.findOne({ coin:coin, userId: userId }).populate('coin');
+        let asset = await Asset.findOne({ coin: coin, userId:user }).populate('coin userId');
         
         if(!asset){
-            console.log('Create New asset')
-            asset = await Asset.create({coin, amount:0, userId}) 
-            console.log(asset);
+            console.log('Creating New asset')
+            asset = await Asset.create({coin, amount:0, userId:user}) 
         }
 
         created = !created? Date.now():created;
@@ -65,8 +54,10 @@ router.post('/transactions/create', isAuthenticated,  async (req, res) => {
             created:created
         })
 
-        const updatedAsset = await Asset.findOneAndUpdate({_id:asset.id},{$push: { transactions: transaction.id  }},{new:true}).populate('coin transactions');
-        
+        const updatedAsset = await Asset.findOneAndUpdate({_id:asset.id},{$push: { transactions: transaction.id  }},{new:true}).populate('coin transactions userId');
+        await helper.updateAssetAmount(updatedAsset);
+        console.log("updated asset", updatedAsset)
+
         res.status(200).json({ asset, transaction });
 
     }catch(e){
@@ -75,72 +66,68 @@ router.post('/transactions/create', isAuthenticated,  async (req, res) => {
     
 });
 
+
 // Edit
-/* 
-router.get('/:portfolioId/asset/:assetId/transactions/:transactionId/edit', (req, res) => {
-    const {portfolioId, assetId, transactionId} = req.params;
 
-    ( async () => {
-        try{
-            let coins = await Coin.find().sort('market_cap_rank')
-            let transaction = await Transaction.findOne({_id:transactionId});
-            transaction.price = transaction.total / transaction.amount; 
-            res.render("transactions/edit", {portfolioId, assetId, transactionId, transaction, coins})
-        }catch(err){
-            res.redirect(`/portfolio/${portfolioId}/asset/${assetId}`);
-        }
-    })();
+router.get('/asset/:assetId/transaction/:transactionId/edit', isAuthenticated, async (req, res) => {
+
+    const {assetId, transactionId} = req.params;
+
+    try {
+        await Asset.findOne({_id:assetId});
+        await Transaction.findOne({_id:transactionId});
+        res.status(200).json("Here you can edit your transaction");
+    } catch(e) {
+        res.status(500).json({ message: e });
+    }
     
-}); 
+});
 
-router.post('/:portfolioId/asset/:assetId/transactions/:transactionId/edit', (req, res) => {
+router.post('/asset/:assetId/transaction/:transactionId/edit', isAuthenticated, async (req, res) => {
 
-    ( async () => {
+    const {assetId, transactionId} = req.params;
+    const {price, currency, amount, total, transactionType, note} = req.body; 
+    let {created} = req.body;
 
-        const {portfolioId, assetId, transactionId} = req.params;
-        const {price, currency, amount, total, transactionType, note} = req.body; 
-        let {created} = req.body;
+    created = !created? Date.now():created;
 
-        created = !created? Date.now():created;
+    try{
+        await Transaction.findOneAndUpdate({_id:transactionId},{price, currency, amount, total, transactionType, note, created});
+        let asset = await Asset.findOne({_id:assetId}).populate('coin transactions');
+        await helper.updateAssetAmount(asset);
+        res.json("Here you can edit your transaction");
 
-        try{
-            await Transaction.findOneAndUpdate({_id:transactionId},{price, currency, amount, total, transactionType, note, created});
-            let asset = await Asset.findOne({_id:assetId}).populate('coin transactions');
-            await helper.updateAssetAmount(asset);
-            res.redirect(`/portfolio/${portfolioId}/asset/${assetId}`);
-
-        }catch(err){
-            console.log(err);
-        }
-    })()
+    }catch(err){
+        res.status(500).json({ message: e });
+    }
 });
 
 
-router.post('/:portfolioId/asset/:assetId/transactions/:transactionId/delete',isLoggedIn, (req, res) => {
+// Delete
 
-    ( async () => {
+router.post('/asset/:assetId/transaction/:transactionId/delete',isAuthenticated, async (req, res) => {
 
-        const {portfolioId,assetId,transactionId} = req.params;
+    const {assetId,transactionId} = req.params;
 
-        try{
-            console.log('DELETEING TRANSACTION');
-            await Transaction.findOneAndDelete({_id:transactionId})
-            const asset = await Asset.findOne({_id:assetId}).populate('coin transactions');
-            console.log('Updating asset => ',asset.transactions.length);
-            if(asset.transactions.length > 0) { 
-                await helper.updateAssetAmount(asset);
-                return res.redirect(`/portfolio/${portfolioId}/asset/${assetId}`);
-            }
-            
-            await Asset.findOneAndDelete({_id:assetId});
-            res.redirect(`/portfolio/${portfolioId}/`);
+    try{
+        console.log('DELETING TRANSACTION');
+        await Transaction.findOneAndDelete({_id:transactionId})
+        const asset = await Asset.findOne({_id:assetId}).populate('coin transactions');
 
-        }catch(err){
-            console.log(err);
-            res.redirect(`/portfolio/${portfolioId}/asset/${assetId}`);
+        console.log('DELETING ASSET');
+        if(asset.transactions.length > 0) {
+            await helper.updateAssetAmount(asset);
+            res.json("Transaction deleted");
         }
-    })();
-}); */
+        
+        await Asset.findOneAndDelete({_id:assetId});
+        res.json("Transaction & asset deleted");
+
+    }catch(err){
+        res.status(500).json({ message: e });
+    }
+    
+});
 
 // Module export
 

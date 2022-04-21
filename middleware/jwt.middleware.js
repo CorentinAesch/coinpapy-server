@@ -16,20 +16,4 @@ function getTokenFromHeaders(req) {
     }
 }
 
-/* const checkUser = (req, res, err) => {
-    const token = req.cookie.jwt;
-
-    if (token) {
-        jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) =>{
-            if (err) {
-                console.log(err)
-                next();
-            } else {
-                const user = User.findById(decodedToken.id);
-                console.log(user);
-            }
-        })
-    }
-} */
-
 module.exports = { isAuthenticated }

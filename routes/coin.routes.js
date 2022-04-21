@@ -9,6 +9,7 @@ router.get("/update", async (req, res, next) => {
         const coin_updates = response.data.map(coin => Coin.updateOne({ id: coin.id }, coin, { upsert: true }));
         await Promise.all(coin_updates);
         const coins = await Coin.find();
+        console.log("updating coins")
         res.status(200).json(coins);
     } catch (e) {
         res.status(500).json({ message: e });
