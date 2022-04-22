@@ -11,18 +11,34 @@ const userSchema = new Schema(
         required: 'Email address is required',
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email address']
     },
+
     firstName: String,
     lastName: String,
+
     profileImage :{
       type: String,
       default: ''
     },
+
     //darkmode:{type:Boolean, default: false},
+
     password: {
       type: String,
       required: 'Password is required',
     },
-    reset: {type:Boolean, default: false}
+
+    reset: {type:Boolean, default: false},
+
+    notifications: [{
+      type: Schema.Types.ObjectId, 
+      ref: 'Notification', 
+    }],
+
+    watchlist : [{
+      type: Schema.Types.ObjectId, 
+      ref: 'Favcoin',
+    }] 
+
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`

@@ -9,7 +9,8 @@ const assetSchema = new Schema(
 
       amount: Number,
 
-      userId: {type: 
+      userId: {
+        type: 
         Schema.Types.ObjectId, 
         ref: 'User'
       },

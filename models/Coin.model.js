@@ -2,7 +2,6 @@ const { Schema, model } = require("mongoose");
 
 const coinSchema = new Schema(
   { 
-    watchlist: {type: Boolean, default:false},
     
     id: { type: String, required: true , unique: true},
     name: String,
