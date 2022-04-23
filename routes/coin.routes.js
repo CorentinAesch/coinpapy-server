@@ -17,7 +17,7 @@ router.get("/update", async (req, res, next) => {
    
 });
 
-router.get("/:coinId", async (req, res, next) => {
+router.get("/coins/:coinId", async (req, res, next) => {
     const { coinId } = req.params
 
     try {

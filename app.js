@@ -31,14 +31,15 @@ app.use("/", authRouter);
 const coinRouter = require("./routes/coin.routes");
 app.use("/", coinRouter);
 
+const watchlistRouter = require("./routes/watchlist.routes");
+app.use("/", watchlistRouter);
+
 const assetRouter = require("./routes/assets.routes");
 app.use("/", assetRouter);
 
 const transactionRouter = require("./routes/transaction.routes");
 app.use("/", transactionRouter);
 
-const watchlistRouter = require("./routes/watchlist.routes");
-app.use("/", watchlistRouter);
 
 /* const userRoutes = require("./routes/auth.routes");
 app.use("/", userRoutes); */

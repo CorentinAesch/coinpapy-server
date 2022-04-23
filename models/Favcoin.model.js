@@ -4,7 +4,8 @@ const favcoinSchema = new Schema(
     {
       coin: { 
         type: Schema.Types.ObjectId, 
-        ref: 'Coin' 
+        ref: 'Coin',
+        required: true
       },
 
       variationAlert: {
