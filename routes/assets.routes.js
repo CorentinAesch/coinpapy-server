@@ -6,13 +6,7 @@ const Asset = require("../models/Asset.model.js");
 
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 
-router.get("/assets", async (req, res) => {
-
-    /* if (!isAuthenticated) {
-        res.json("Login first please")
-    }
-
-    console.log(isAuthenticated) */
+router.get("/assets", isAuthenticated, async (req, res) => {
 
     try {
         const assets = await Asset.find();
@@ -30,22 +24,16 @@ router.get("/assets", async (req, res) => {
 
 });
 
-/* router.get("/assets/:assetId", isAuthenticated, async (req, res, next) => {
+router.get("/assets/:assetId", isAuthenticated, async (req, res, next) => {
     
     const { assetId } = req.params;
     const userId = req.session.user.id;
 
     try{
         const asset = await Asset.findOne({ _id:assetId, userId:userId}).populate('coin transactions userId');
-        const portfolio = await Portfolio.findById(portfolioId).populate({
-            path : 'assets',
-            populate : {
-                path : 'coin'
-            }
-        });
 
         console.log(asset);
-
+/* 
         let amount = 0;
         let total = 0;
         let num = 0;
@@ -70,14 +58,14 @@ router.get("/assets", async (req, res) => {
         asset.avgBuyPrice = total / num;
 
         // Total PnL
-        asset.pnl = asset.coin.current_price * asset.amount - (asset.avgBuyPrice * asset.amount); 
+        asset.pnl = asset.coin.current_price * asset.amount - (asset.avgBuyPrice * asset.amount);  */
 
-        res.json(asset)
+        res.status(200).json(asset);
     
         
     }catch(err){
-        res.json(err);
+        res.status(500).json(err);
     }
-});  */
+}); 
 
 module.exports = router;
