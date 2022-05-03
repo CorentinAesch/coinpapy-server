@@ -12,9 +12,6 @@ const userSchema = new Schema(
         match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email address']
     },
 
-    firstName: String,
-    lastName: String,
-
     profileImage :{
       type: String,
       default: ''

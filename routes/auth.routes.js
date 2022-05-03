@@ -3,16 +3,18 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/User.model");
 const jwt = require("jsonwebtoken");
 
+const { isAuthenticated } = require("../middleware/jwt.middleware");
+
 const router = express.Router();
 
 router.post("/signup", async (req, res) => {
     try {
-        const { email, firstName, lastName, password } = req.body;
+        const { email, password } = req.body;
 
         if (!email) {
             return res
                 .status(400)
-                .render("auth/signup", { errorMessage: {email: "Please provide your email."}, form:{ email, firstName,lastName, password }});
+                .render("auth/signup", { errorMessage: {email: "Please provide your email."}, form:{ email, password }});
         }
     
         if (password.length < 8) {
@@ -24,7 +26,7 @@ router.post("/signup", async (req, res) => {
             return res.status(400).json({ password: "Password needs to have at least 8 chars and must contain at least one number, one lowercase and one uppercase letter." });
         }
           
-        console.log({ email,firstName,lastName, password });
+        console.log({ email, password });
 
         const foundUser = await User.findOne({ email });
         if (foundUser) {
@@ -35,7 +37,7 @@ router.post("/signup", async (req, res) => {
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(password, salt);
 
-        const createdUser = await User.create({ email, firstName, lastName, password: hashedPassword });
+        const createdUser = await User.create({ email, password: hashedPassword });
 
         res.status(200).json({ email: createdUser.email, _id: createdUser._id });
     }
@@ -68,13 +70,17 @@ router.post("/login", async (req, res) => {
 
     //delete foundUser.password;
     const authToken = jwt.sign(
-        { _id: foundUser._id, email: foundUser.email, username: foundUser.username },
+        { _id: foundUser._id, email: foundUser.email},
         process.env.TOKEN_SECRET,
         { algorithm: "HS256", expiresIn: "1h" }
     )
 
     res.status(200).json({ authToken });
 
+});
+
+router.get("/verify", isAuthenticated, (req,res) => {
+    res.status(200).json(req.payload);
 });
 
 module.exports = router;

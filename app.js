@@ -23,22 +23,22 @@ app.use((req,res,next) => {
 // 👇 Start handling routes here
 // Contrary to the views version, all routes are controlled from the routes/index.js
 const allRoutes = require("./routes/index.routes");
-app.use("/", allRoutes);
+app.use("/api", allRoutes);
 
 const authRouter = require("./routes/auth.routes");
-app.use("/", authRouter);
+app.use("/api", authRouter);
 
 const coinRouter = require("./routes/coin.routes");
-app.use("/", coinRouter);
+app.use("/api", coinRouter);
 
 const watchlistRouter = require("./routes/watchlist.routes");
-app.use("/", watchlistRouter);
+app.use("/api", watchlistRouter);
 
 const assetRouter = require("./routes/assets.routes");
-app.use("/", assetRouter);
+app.use("/api", assetRouter);
 
 const transactionRouter = require("./routes/transaction.routes");
-app.use("/", transactionRouter);
+app.use("/api", transactionRouter);
 
 
 /* const userRoutes = require("./routes/auth.routes");

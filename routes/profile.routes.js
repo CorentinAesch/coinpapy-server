@@ -9,14 +9,14 @@ const saltRounds = 10;
 const User = require("../models/User.model");
 
 
-router.get("/:userId/edit", (req, res, next) => {
+/* router.get("/:userId/edit", (req, res, next) => {
     const {userId} = req.params
     User.findOne({_id:userId})
     .then(user => {
         res.render("profile/edit", {userId,user});
     })
     .catch(err => console.log(err));
-});
+}); */
 
 router.post("/:userId/edit", fileUploader.single('profile-picture'), (req, res, next) => {
 
