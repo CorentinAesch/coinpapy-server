@@ -12,7 +12,7 @@ const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 // Get all transactions
 
-router.get('/transaction'), isAuthenticated, async (req, res) => {
+router.get('/transactions'), isAuthenticated, async (req, res) => {
 
     try {
         const transac = await Transaction.find();
