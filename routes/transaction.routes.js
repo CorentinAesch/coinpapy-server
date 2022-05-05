@@ -12,7 +12,9 @@ const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 // Get all transactions
 
-router.get('/transactions'), isAuthenticated, async (req, res) => {
+router.get('/transactions', isAuthenticated, async (req, res) => {
+
+    const user = req.payload._id;
 
     try {
         const transac = await Transaction.find();
@@ -27,11 +29,12 @@ router.get('/transactions'), isAuthenticated, async (req, res) => {
     } catch(e) {
         res.status(500).json({ message: e });
     }
-}
+});
 
 // Create 
 
 router.get('/transaction/create', isAuthenticated, async (req, res) => {
+    
 
     try {
         //const coins = await Coin.find().sort('market_cap_rank');
