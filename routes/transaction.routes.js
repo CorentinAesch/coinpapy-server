@@ -10,8 +10,26 @@ const helper = require("../helpers/helpers.js");
 
 const { isAuthenticated } = require("../middleware/jwt.middleware");
 
+// Get all transactions
 
-// Create
+router.get('/transaction'), isAuthenticated, async (req, res) => {
+
+    try {
+        const transac = await Transaction.find();
+       
+        if (!transac) {
+            res.status(500).json({ message: "No transaction yet. Add a new transaction"})
+        } else {
+            console.log(transac)
+            res.status(200).json({ transac });
+        }
+
+    } catch(e) {
+        res.status(500).json({ message: e });
+    }
+}
+
+// Create 
 
 router.get('/transaction/create', isAuthenticated, async (req, res) => {
 
