@@ -21,7 +21,7 @@ router.get("/coins/:coinId", async (req, res, next) => {
     const { coinId } = req.params
 
     try {
-        const coin = await Coin.findOne({ id:coinId })
+        const coin = await Coin.findById(coinId)
         console.log(coin)
         res.status(200).json(coin)
     } catch(e) {
