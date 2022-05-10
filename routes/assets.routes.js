@@ -48,12 +48,10 @@ router.get("/assets/:assetId", isAuthenticated, async (req, res, next) => {
 
     try{
         const asset = await Asset.findOne({ _id:assetId, userId:userId}).populate('coin transactions userId');
-        
         res.status(200).json(asset);
-    
         
-    }catch(err){
-        res.status(500).json(err);
+    } catch (e) {
+        res.status(500).json({ message: e });
     }
 }); 
 
