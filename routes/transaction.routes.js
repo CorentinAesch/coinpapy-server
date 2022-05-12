@@ -34,8 +34,6 @@ router.get('/transactions', isAuthenticated, async (req, res) => {
 // Create 
 
 router.get('/transaction/create', isAuthenticated, async (req, res) => {
-    
-
     try {
         //const coins = await Coin.find().sort('market_cap_rank');
         res.status(200).json("Here you can create a new transac")
@@ -47,13 +45,12 @@ router.get('/transaction/create', isAuthenticated, async (req, res) => {
 
 
 router.post('/transaction/create', isAuthenticated,  async (req, res) => {
-   
     const { price, currency, amount, coin, total, transactionType, note } = req.body; 
     let { created } = req.body;
 
     const user = req.payload._id;
     
-    console.log(user)
+    console.log(coin)
 
     try{
 
