@@ -49,8 +49,6 @@ router.post('/transaction/create', isAuthenticated,  async (req, res) => {
     let { created } = req.body;
 
     const user = req.payload._id;
-    
-    console.log(coin)
 
     try{
 

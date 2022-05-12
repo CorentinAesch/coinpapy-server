@@ -12,8 +12,6 @@ router.get("/assets", isAuthenticated, async (req, res) => {
 
     try {
         const assets = await Asset.find({ userId: userId }).populate('coin transactions');
-        console.log("assets", assets)
-        console.log("assets", assets[0].transactions)
 
         /* assets.forEach((asset) => {
             let total = 0;
