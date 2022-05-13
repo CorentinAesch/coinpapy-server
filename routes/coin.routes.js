@@ -32,4 +32,15 @@ router.get("/coins/:coinId", async (req, res, next) => {
    
 });
 
+router.get("/trending", async (req, res, next) => {
+    try {
+        const response = await axios.get('https://api.coingecko.com/api/v3/search/trending');
+        const trending = response.data
+        res.status(200).json(trending);
+    } catch (e) {
+        res.status(500).json({ message: e });
+    }
+   
+});
+
 module.exports = router;
