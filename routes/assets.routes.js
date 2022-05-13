@@ -13,21 +13,6 @@ router.get("/assets", isAuthenticated, async (req, res) => {
     try {
         const assets = await Asset.find({ userId: userId }).populate('coin transactions');
 
-        /* assets.forEach((asset) => {
-            let total = 0;
-            let num = 0;
-            
-            asset.transactions.forEach(transaction => {
-                if(transaction.transactionType === 'buy'){
-                    total += transaction.amount * transaction.price;
-                    num += transaction.amount;
-                }
-            });
-
-            asset.avgBuyPrice = total / num;
-            asset.pnl = asset.coin.current_price * asset.amount - (asset.avgBuyPrice * asset.amount);
-        }) */
-
         if (!assets) {
             res.status(500).json({ message: "No assets yet. Add a new transaction"})
         } else {
